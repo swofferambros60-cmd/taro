@@ -8,15 +8,17 @@
         /* 迎合小红书审美的复古奶油风 */
         :root {
             --bg-color: #FDFBF7;
+            --card-bg: #FFFFFF;
             --text-main: #5C4D43;
             --text-sub: #8C7B70;
             --gold-accent: #D4AF37;
+            --soft-pink: #F7EBE8;
         }
 
         body {
             background-color: var(--bg-color);
             color: var(--text-main);
-            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif;
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif, "PingFang SC", "Microsoft YaHei";
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -28,14 +30,14 @@
 
         .header {
             text-align: center;
-            margin-bottom: 40px;
+            margin-bottom: 30px;
         }
 
         .header h1 {
             font-size: 28px;
             font-weight: normal;
             letter-spacing: 2px;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             color: var(--text-main);
         }
 
@@ -48,30 +50,37 @@
         /* 塔罗牌布局区域 */
         .tarot-spread {
             display: flex;
-            gap: 30px;
+            gap: 25px;
             justify-content: center;
             flex-wrap: wrap;
-            max-width: 900px;
+            max-width: 1000px;
+            width: 100%;
+        }
+
+        .card-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 220px;
         }
 
         /* 3D翻转卡片容器 */
         .card-container {
             width: 200px;
             height: 340px;
-            perspective: 1000px; /* 赋予3D深度 */
+            perspective: 1000px;
             cursor: pointer;
-            margin-bottom: 20px;
         }
 
         .card-inner {
             width: 100%;
             height: 100%;
             position: relative;
-            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* 带有弹性效果的翻转 */
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
             transform-style: preserve-3d;
         }
 
-        /* 触发翻转的类 */
+        /* 触发翻转类 */
         .card-container.flipped .card-inner {
             transform: rotateY(180deg);
         }
@@ -82,11 +91,11 @@
             position: absolute;
             backface-visibility: hidden;
             border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(92, 77, 67, 0.15);
+            box-shadow: 0 8px 20px rgba(92, 77, 67, 0.12);
             overflow: hidden;
         }
 
-        /* 牌背设计（未翻开时） */
+        /* 牌背设计 */
         .card-front {
             background: linear-gradient(135deg, #2C3539, #1A1D20);
             display: flex;
@@ -102,7 +111,7 @@
             opacity: 0.8;
         }
 
-        /* 牌面设计（翻开后） */
+        /* 牌面设计 */
         .card-back {
             transform: rotateY(180deg);
             background-color: #fff;
@@ -111,23 +120,66 @@
         .card-back img {
             width: 100%;
             height: 100%;
-            object-fit: cover; /* 保证图片铺满且不变形 */
+            object-fit: cover;
         }
 
-        /* 卡片底部文字（例如：过去、现在、未来） */
         .card-label {
             text-align: center;
             margin-top: 15px;
-            font-size: 14px;
-            color: var(--text-sub);
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--text-main);
             letter-spacing: 1px;
+        }
+
+        /* 解读文案卡片样式 */
+        .card-reading {
+            margin-top: 15px;
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.6s ease;
+            pointer-events: none;
+        }
+
+        .card-reading.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
+
+        .reading-card-name {
+            font-size: 13px;
+            color: var(--gold-accent);
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .reading-title {
+            font-size: 14px;
+            color: var(--text-main);
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+
+        .reading-text {
+            font-size: 12px;
+            color: var(--text-sub);
+            line-height: 1.6;
+            margin: 0;
         }
 
         /* 重新洗牌按钮 */
         .btn-shuffle {
-            margin-top: 50px;
+            margin-top: 40px;
             padding: 12px 36px;
-            font-size: 16px;
+            font-size: 15px;
             color: #fff;
             background-color: var(--text-main);
             border: none;
@@ -148,58 +200,121 @@
 
     <div class="header">
         <h1>Hogwarts Secret Realm Tarot</h1>
-        <p>✨ 冥想你的问题，依次点击卡牌翻开命运的指引 ✨</p>
+        <p>✨ 凝神思考你的困惑，依次翻开牌面获取魔法启示 ✨</p>
     </div>
 
-    <!-- 经典三牌阵：过去、现在、未来 -->
-    <div class="tarot-spread" id="tarot-spread">
-        <div>
-            <div class="card-container" onclick="flipCard(this)">
+    <!-- 牌阵区域 -->
+    <div class="tarot-spread">
+        <!-- 过去 -->
+        <div class="card-slot">
+            <div class="card-container" onclick="flipCard(this, 0)">
                 <div class="card-inner">
                     <div class="card-front"></div>
                     <div class="card-back"><img src="" alt="Tarot Card" class="tarot-img"></div>
                 </div>
             </div>
-            <div class="card-label">Past Journey</div>
+            <div class="card-label">Past Journey · 过去</div>
+            <div class="card-reading" id="reading-0">
+                <div class="reading-card-name"></div>
+                <div class="reading-title"></div>
+                <p class="reading-text"></p>
+            </div>
         </div>
-        <div>
-            <div class="card-container" onclick="flipCard(this)">
+
+        <!-- 现在 -->
+        <div class="card-slot">
+            <div class="card-container" onclick="flipCard(this, 1)">
                 <div class="card-inner">
                     <div class="card-front"></div>
                     <div class="card-back"><img src="" alt="Tarot Card" class="tarot-img"></div>
                 </div>
             </div>
-            <div class="card-label">Present Heart</div>
+            <div class="card-label">Present Heart · 现在</div>
+            <div class="card-reading" id="reading-1">
+                <div class="reading-card-name"></div>
+                <div class="reading-title"></div>
+                <p class="reading-text"></p>
+            </div>
         </div>
-        <div>
-            <div class="card-container" onclick="flipCard(this)">
+
+        <!-- 未来 -->
+        <div class="card-slot">
+            <div class="card-container" onclick="flipCard(this, 2)">
                 <div class="card-inner">
                     <div class="card-front"></div>
                     <div class="card-back"><img src="" alt="Tarot Card" class="tarot-img"></div>
                 </div>
             </div>
-            <div class="card-label">Future Path</div>
+            <div class="card-label">Future Path · 未来</div>
+            <div class="card-reading" id="reading-2">
+                <div class="reading-card-name"></div>
+                <div class="reading-title"></div>
+                <p class="reading-text"></p>
+            </div>
         </div>
     </div>
 
     <button class="btn-shuffle" onclick="shuffleAndReset()">重新洗牌 (Shuffle)</button>
 
     <script>
-        // 包含你提供的所有哈利波特塔罗牌图片文件名
-        const allCards = [
-            'DEATH.jfif',
-            'JUDGEMENT.jfif',
-            'JUSTICE.jfif',
-            'STRENGTH.jfif',
-            'TEMPERANCE.jfif',
-            'THE CHARIOT.jfif',
-            'THE DEVIL.jfif',
-            'THE FATHER.jfif',
-            'THE FOOL.jfif',
-            'THE HANGEN MAN.jfif'
-        ];
+        // 10张卡牌对应的解读数据库（小红书温和治愈风）
+        const cardsDatabase = {
+            'DEATH.jfif': {
+                name: '13 - DEATH (死神)',
+                title: '老魔杖与旧篇章的终结',
+                text: '告别不适合你的执念与能量。死神并不是终点，而是像魔杖换主一样，意味着旧循环的结束。放下过去，才能空出双手迎接全新的魔法。'
+            },
+            'JUDGEMENT.jfif': {
+                name: '20 - JUDGEMENT (审判)',
+                title: '福克斯与灵魂的涅槃觉醒',
+                text: '内心深处的召唤已经响起。就像凤凰在灰烬中重获新生，你正在经历一次自我蜕变，请勇敢接纳过去的一切，坦然迈向更高的阶段。'
+            },
+            'JUSTICE.jfif': {
+                name: '8 - JUSTICE (正义)',
+                title: '分院帽与内心的真实选择',
+                text: '分院帽听从你内心的渴望。面对当下选择时，无需迎合他人，保持坦诚与理性。你内心的正义与直觉，会为你指明最适合的归宿。'
+            },
+            'STRENGTH.jfif': {
+                name: '11 - STRENGTH (力量)',
+                title: '卢平教授与温和的掌控力',
+                text: '真正的力量并非强硬，而是接纳软肋后的温和与坚韧。像卢平对待心中的野兽一样，用包容与爱去抚平焦虑，你远比想象中更强大。'
+            },
+            'TEMPERANCE.jfif': {
+                name: '14 - TEMPERANCE (节制)',
+                title: '魔法石与魔药的精准调和',
+                text: '像熬制完美的魔药一样，生活需要火候与耐心。保持情绪的平稳，平衡好付出与收回，不疾不徐，美好的魔法正在静静酝酿。'
+            },
+            'THE CHARIOT.jfif': {
+                name: '7 - THE CHARIOT (战车)',
+                title: '飞天汽车与破局的魄力',
+                text: '握紧你心中的方向盘！哪怕前方有打人柳的阻碍，也要拿出冲破束缚的魄力。保持专注与信念，这趟旅途定能一往无前。'
+            },
+            'THE DEVIL.jfif': {
+                name: '15 - THE DEVIL (恶魔)',
+                title: '伏地魔与精神枷锁的觉察',
+                text: '审视那些让你感到焦虑或过度消耗的依赖。当你意识到这些精神束缚的瞬间，你就已经握住了斩断它们的魔杖，主导权在你手中。'
+            },
+            'THE FATHER.jfif': {
+                name: '4 - THE FATHER (皇帝)',
+                title: '詹姆·波特与坚实的守护',
+                text: '来自支柱与规则的能量。这段时间你拥有建立秩序的能力，去成为自己生活的守护者，给予自己足够的安全感与掌控感。'
+            },
+            'THE FOOL.jfif': {
+                name: '0 - THE FOOL (愚人)',
+                title: '九又四分之三站台的全新起点',
+                text: '带上你的好奇心，勇敢撞向那堵看似不可能的墙吧！新的篇章正在为你开启，不必过分担心未来，带着纯粹的信心去开启冒险。'
+            },
+            'THE HANGEN MAN.jfif': {
+                name: '12 - THE HANGEN MAN (倒吊人)',
+                title: '金钟悬挂与倒转的新视角',
+                text: '如果感到停滞不前，不妨将视角倒转过来。暂时的等待与沉淀并不是妥协，换个角度看世界，你会看清之前忽略的重要真相。'
+            }
+        };
 
-        // Fisher-Yates 洗牌算法，确保完全随机
+        const allCardKeys = Object.keys(cardsDatabase);
+        let currentSelectedCards = [];
+
+        // 洗牌算法
         function shuffleArray(array) {
             let currentIndex = array.length, randomIndex;
             while (currentIndex !== 0) {
@@ -210,37 +325,52 @@
             return array;
         }
 
-        // 初始化和重置牌阵
+        // 初始化/洗牌重置
         function shuffleAndReset() {
-            // 1. 将所有牌翻盖回去
+            // 1. 盖回所有牌，隐藏所有解读
             const containers = document.querySelectorAll('.card-container');
-            containers.forEach(container => {
-                container.classList.remove('flipped');
-            });
+            const readings = document.querySelectorAll('.card-reading');
+            
+            containers.forEach(container => container.classList.remove('flipped'));
+            readings.forEach(reading => reading.classList.remove('show'));
 
-            // 延迟一点时间等翻转动画结束后再替换图片，体验更好
+            // 2. 延迟等待盖牌动画完成后更新数据
             setTimeout(() => {
-                // 2. 打乱数组并抽取前3张（保证不重复）
-                const shuffledCards = shuffleArray([...allCards]);
-                const selectedCards = shuffledCards.slice(0, 3);
+                const shuffled = shuffleArray([...allCardKeys]);
+                currentSelectedCards = shuffled.slice(0, 3); // 随机抽取3张不重复的卡牌
 
-                // 3. 将选中的图片赋值给牌背的 <img> 标签
+                // 更新 DOM 中的图片和解读文本
                 const imgElements = document.querySelectorAll('.tarot-img');
                 imgElements.forEach((img, index) => {
-                    img.src = selectedCards[index];
+                    const cardKey = currentSelectedCards[index];
+                    const cardData = cardsDatabase[cardKey];
+
+                    // 赋值图片
+                    img.src = cardKey;
+
+                    // 预填解牌文案
+                    const readingBox = document.getElementById(`reading-${index}`);
+                    readingBox.querySelector('.reading-card-name').innerText = cardData.name;
+                    readingBox.querySelector('.reading-title').innerText = cardData.title;
+                    readingBox.querySelector('.reading-text').innerText = cardData.text;
                 });
-            }, 400); // 400ms 是等待翻盖动画的时间
+            }, 400);
         }
 
-        // 点击卡片触发翻转效果
-        function flipCard(element) {
-            // 如果已经被翻开，就不再触发
+        // 点击翻牌同时显示解牌文案
+        function flipCard(element, index) {
             if (!element.classList.contains('flipped')) {
                 element.classList.add('flipped');
+                
+                // 翻牌动画进行到一半时显示文字
+                setTimeout(() => {
+                    const readingBox = document.getElementById(`reading-${index}`);
+                    readingBox.classList.add('show');
+                }, 300);
             }
         }
 
-        // 页面加载时自动洗牌一次
+        // 页面加载自动运行洗牌
         window.onload = shuffleAndReset;
     </script>
 </body>
