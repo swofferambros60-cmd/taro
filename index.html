@@ -258,7 +258,31 @@
 
     <script>
         // 10张卡牌对应的解读数据库（小红书温和治愈风）
-        const cardsDatabase = {
+        const cardsDatabase = {// 直接替换你原本存放卡牌数据的数组
+const cards = [
+  { id: 0, name: "THE FOOL", cnName: "愚人", element: "九又四分之三站台与推着推车的哈利", meaning: "象征新的开始、纯真、冒险与无限可能性。" },
+  { id: 1, name: "THE WIZARD", cnName: "魔术师 / 巫师", element: "身穿韦斯莱毛衣、手握魔杖施法的哈利·波特", meaning: "象征创造力、行动力、掌控资源与显化。" },
+  { id: 2, name: "THE WITCH", cnName: "女祭司 / 女巫", element: "在药膏与书籍间沉思炼药的赫敏·格兰杰", meaning: "象征智慧、潜意识、理性与内在知识。" },
+  { id: 3, name: "THE MOTHER", cnName: "女皇 / 母亲", element: "用魔法烹饪、编织毛衣的莫丽·韦斯莱", meaning: "象征丰饶、无条件的爱、滋养与包容。" },
+  { id: 4, name: "THE FATHER", cnName: "皇帝 / 父亲", element: "詹姆·波特", meaning: "象征权威、秩序、保护与责任。" },
+  { id: 5, name: "THE HIEROPHANT", cnName: "教皇", element: "阿不思·邓布利多", meaning: "象征传统、导师、精神领袖与高等智慧。" },
+  { id: 6, name: "THE LOVERS", cnName: "恋人", element: "比尔·韦斯莱与芙蓉·德拉库尔", meaning: "象征真爱、结合、羁绊与重大选择。" },
+  { id: 7, name: "THE CHARIOT", cnName: "战车", element: "飞天汽车与霍格沃茨特快列车", meaning: "象征意志力、冲破困境、胜利与掌控。" },
+  { id: 8, name: "JUSTICE", cnName: "正义", element: "分院帽", meaning: "象征公平、裁决、诚实与选择的后果。" },
+  { id: 9, name: "THE HERMIT", cnName: "隐士", element: "在黑暗储藏室孤身研究的西弗勒斯·斯内普", meaning: "象征内省、孤独的探索、深层思考与隐秘潜行。" },
+  { id: 10, name: "WHEEL OF FORTUNE", cnName: "命运之轮", element: "赫敏的时间转换器（Time-Turner）", meaning: "象征命运转折、时机、周期循环与不可逆的契机。" },
+  { id: 11, name: "STRENGTH", cnName: "力量", element: "莱姆斯·卢平与其身后的狼人阴影", meaning: "象征内在包容、温柔的克制、勇气与接纳。" },
+  { id: 12, name: "THE HANGED MAN", cnName: "倒吊人", element: "倒金钟咒（Levicorpus）", meaning: "象征换位思考、牺牲、等待与顺应困境。" },
+  { id: 13, name: "DEATH", cnName: "死神", element: "老魔杖与死亡圣器符号", meaning: "象征终结、彻底的变革、旧阶段结束与重生。" },
+  { id: 14, name: "TEMPERANCE", cnName: "节制", element: "魔法石与炼金/熬制魔药", meaning: "象征平衡、调和、耐心与适度。" },
+  { id: 15, name: "THE DEVIL", cnName: "恶魔", element: "伏地魔、纳吉尼与黑魔标记", meaning: "象征执念、欲望、束缚与恐惧。" },
+  { id: 16, name: "THE TOWER", cnName: "高塔", element: "被袭击和火光笼罩的霍格沃茨塔楼", meaning: "象征突如其来的剧变、破灭、虚幻规则的崩塌。" },
+  { id: 17, name: "THE STAR", cnName: "星星", element: "邓布利多留给罗恩的熄灯器（Deluminator）", meaning: "象征希望、指引、心灵抚慰与灵感。" },
+  { id: 18, name: "THE MOON", cnName: "月亮", element: "装满记忆银丝的冥想盆（Pensieve）", meaning: "象征潜意识、迷茫、隐秘与直觉。" },
+  { id: 19, name: "THE SUN", cnName: "太阳", element: "哈利骑乘鹰头马身有翼兽巴克比克翱翔", meaning: "象征自由、活力、成功与光明。" },
+  { id: 20, name: "JUDGEMENT", cnName: "审判", element: "凤凰福克斯（Fawkes）", meaning: "象征复苏、觉醒、灵魂救赎与召唤。" },
+  { id: 21, name: "THE WORLD", cnName: "世界", element: "国王十字车站的白色迷蒙空间", meaning: "象征圆满、完美终结、达成与灵魂的升华。" }
+];
             'DEATH.jfif': {
                 name: '13 - DEATH (死神)',
                 title: '老魔杖与旧篇章的终结',
