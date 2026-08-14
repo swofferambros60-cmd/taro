@@ -1,376 +1,398 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>哈利波特塔罗牌在线占卜</title>
-  <style>
-    /* 基础样式重置 */
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>霍格沃茨秘境塔罗 | 魔法指引</title>
+    <style>
+        /* 迎合小红书审美的复古奶油风 */
+        :root {
+            --bg-color: #FDFBF7;
+            --card-bg: #FFFFFF;
+            --text-main: #5C4D43;
+            --text-sub: #8C7B70;
+            --gold-accent: #D4AF37;
+            --soft-pink: #F7EBE8;
+        }
 
-    body {
-      background: #12121c;
-      color: #e0e0e0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      min-height: 100vh;
-      padding: 20px;
-    }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: "Palatino Linotype", "Book Antiqua", Palatino, serif, "PingFang SC", "Microsoft YaHei";
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+            padding: 40px 20px;
+            background-image: radial-gradient(circle at center, #ffffff 0%, #FDFBF7 100%);
+        }
 
-    h1 {
-      color: #f39c12;
-      margin: 20px 0 10px 0;
-      font-size: 24px;
-      text-align: center;
-    }
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
 
-    .subtitle {
-      color: #888;
-      font-size: 14px;
-      margin-bottom: 30px;
-    }
+        .header h1 {
+            font-size: 28px;
+            font-weight: normal;
+            letter-spacing: 2px;
+            margin-bottom: 8px;
+            color: var(--text-main);
+        }
 
-    /* 塔罗牌卡片 3D 翻转效果 */
-    .card-container {
-      perspective: 1000px;
-      width: 200px;
-      height: 340px;
-      margin-bottom: 25px;
-    }
+        .header p {
+            font-size: 14px;
+            color: var(--text-sub);
+            font-style: italic;
+        }
 
-    .card {
-      width: 100%;
-      height: 100%;
-      position: relative;
-      transform-style: preserve-3d;
-      transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-      cursor: pointer;
-    }
+        /* 塔罗牌布局区域 */
+        .tarot-spread {
+            display: flex;
+            gap: 25px;
+            justify-content: center;
+            flex-wrap: wrap;
+            max-width: 1000px;
+            width: 100%;
+        }
 
-    .card.flipped {
-      transform: rotateY(180deg);
-    }
+        .card-slot {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 220px;
+        }
 
-    .card-face {
-      position: absolute;
-      width: 100%;
-      height: 100%;
-      backface-visibility: hidden;
-      border-radius: 12px;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.6);
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      padding: 16px;
-      border: 2px solid #d4af37;
-    }
+        /* 3D翻转卡片容器 */
+        .card-container {
+            width: 200px;
+            height: 340px;
+            perspective: 1000px;
+            cursor: pointer;
+        }
 
-    /* 牌背 */
-    .card-back {
-      background: linear-gradient(135deg, #1f1c2c, #928dab);
-      color: #d4af37;
-    }
+        .card-inner {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            transition: transform 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            transform-style: preserve-3d;
+        }
 
-    .card-back-pattern {
-      width: 80%;
-      height: 80%;
-      border: 2px dashed #d4af37;
-      border-radius: 8px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-size: 32px;
-    }
+        /* 触发翻转类 */
+        .card-container.flipped .card-inner {
+            transform: rotateY(180deg);
+        }
 
-    /* 牌面 */
-    .card-front {
-      background: #232334;
-      color: #fff;
-      transform: rotateY(180deg);
-      text-align: center;
-    }
+        .card-front, .card-back {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            backface-visibility: hidden;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(92, 77, 67, 0.12);
+            overflow: hidden;
+        }
 
-    .card-title {
-      font-size: 18px;
-      font-weight: bold;
-      color: #f1c40f;
-      margin-bottom: 6px;
-    }
+        /* 牌背设计 */
+        .card-front {
+            background: linear-gradient(135deg, #2C3539, #1A1D20);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--gold-accent);
+        }
 
-    .card-number {
-      font-size: 12px;
-      color: #aaa;
-      margin-bottom: 12px;
-    }
+        .card-front::after {
+            content: '✨';
+            font-size: 40px;
+            color: var(--gold-accent);
+            opacity: 0.8;
+        }
 
-    /* 翻牌按钮 */
-    .action-btn {
-      background: linear-gradient(135deg, #f39c12, #d35400);
-      color: #fff;
-      border: none;
-      padding: 12px 36px;
-      font-size: 16px;
-      font-weight: bold;
-      border-radius: 25px;
-      cursor: pointer;
-      box-shadow: 0 4px 15px rgba(243, 156, 18, 0.4);
-      transition: all 0.2s;
-    }
+        /* 牌面设计 */
+        .card-back {
+            transform: rotateY(180deg);
+            background-color: #fff;
+        }
 
-    .action-btn:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 20px rgba(243, 156, 18, 0.6);
-    }
+        .card-back img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
-    /* 卡牌解读结果面板 */
-    .reading-box {
-      margin-top: 25px;
-      background: #1e1e2d;
-      border: 1px solid #33334d;
-      border-radius: 12px;
-      padding: 20px;
-      max-width: 400px;
-      width: 100%;
-      display: none;
-    }
+        .card-label {
+            text-align: center;
+            margin-top: 15px;
+            font-size: 15px;
+            font-weight: bold;
+            color: var(--text-main);
+            letter-spacing: 1px;
+        }
 
-    .reading-box h3 {
-      color: #f39c12;
-      margin-bottom: 10px;
-      font-size: 16px;
-      border-bottom: 1px solid #33334d;
-      padding-bottom: 6px;
-    }
+        /* 解读文案卡片样式 */
+        .card-reading {
+            margin-top: 15px;
+            width: 100%;
+            background-color: var(--card-bg);
+            border: 1px solid rgba(212, 175, 55, 0.3);
+            border-radius: 10px;
+            padding: 15px;
+            box-sizing: border-box;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+            opacity: 0;
+            transform: translateY(15px);
+            transition: all 0.6s ease;
+            pointer-events: none;
+        }
 
-    .reading-box p {
-      font-size: 14px;
-      line-height: 1.6;
-      color: #ccc;
-      margin-bottom: 10px;
-    }
+        .card-reading.show {
+            opacity: 1;
+            transform: translateY(0);
+            pointer-events: auto;
+        }
 
-    /* ---------------------------------------------------- */
-    /* 支付解锁弹窗样式                                     */
-    /* ---------------------------------------------------- */
-    .modal-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100%;
-      height: 100%;
-      background: rgba(0, 0, 0, 0.8);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      z-index: 9999;
-      backdrop-filter: blur(4px);
-    }
+        .reading-card-name {
+            font-size: 13px;
+            color: var(--gold-accent);
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
 
-    .modal-content {
-      background: #ffffff;
-      padding: 24px;
-      border-radius: 16px;
-      text-align: center;
-      max-width: 320px;
-      width: 85%;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
-      color: #333333;
-    }
+        .reading-title {
+            font-size: 14px;
+            color: var(--text-main);
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
 
-    .modal-content h3 {
-      margin-top: 0;
-      color: #1a1a1a;
-      font-size: 18px;
-    }
+        .reading-text {
+            font-size: 12px;
+            color: var(--text-sub);
+            line-height: 1.6;
+            margin: 0;
+        }
 
-    .pay-tip {
-      font-size: 14px;
-      color: #555555;
-      margin: 12px 0;
-      line-height: 1.4;
-    }
+        /* 重新洗牌按钮 */
+        .btn-shuffle {
+            margin-top: 40px;
+            padding: 12px 36px;
+            font-size: 15px;
+            color: #fff;
+            background-color: var(--text-main);
+            border: none;
+            border-radius: 30px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(92, 77, 67, 0.2);
+            transition: all 0.3s ease;
+            font-family: inherit;
+        }
 
-    .qr-img {
-      width: 220px;
-      height: auto;
-      border-radius: 8px;
-      border: 1px solid #eeeeee;
-      margin: 8px 0;
-    }
-
-    .pay-note {
-      font-size: 12px;
-      color: #888888;
-      margin: 8px 0 16px 0;
-    }
-
-    .pay-btn {
-      background-color: #07c160; /* 微信绿 */
-      color: #ffffff;
-      border: none;
-      padding: 12px 20px;
-      font-size: 15px;
-      font-weight: bold;
-      border-radius: 24px;
-      cursor: pointer;
-      width: 100%;
-      transition: background-color 0.2s, transform 0.1s;
-    }
-
-    .pay-btn:hover {
-      background-color: #06ad56;
-    }
-
-    .pay-btn:active {
-      transform: scale(0.98);
-    }
-  </style>
+        .btn-shuffle:hover {
+            background-color: var(--gold-accent);
+            transform: translateY(-2px);
+        }
+    </style>
 </head>
 <body>
 
-  <h1>⚡ 霍格沃茨塔罗牌 ⚡</h1>
-  <p class="subtitle">抽取你的今日命运与魔法启示</p>
-
-  <!-- 牌面展示区 -->
-  <div class="card-container">
-    <div class="card" id="tarotCard">
-      <!-- 牌背 -->
-      <div class="card-face card-back">
-        <div class="card-back-pattern">🔮</div>
-      </div>
-      <!-- 牌面 -->
-      <div class="card-face card-front">
-        <div class="card-number" id="cardNumber">NO.0</div>
-        <div class="card-title" id="cardName">THE FOOL</div>
-        <p style="font-size: 12px; color: #888; margin-top: 10px;" id="cardElement">对应元素</p>
-      </div>
+    <div class="header">
+        <h1>Hogwarts Secret Realm Tarot</h1>
+        <p>✨ 凝神思考你的困惑，依次翻开牌面获取魔法启示 ✨</p>
     </div>
-  </div>
 
-  <!-- 翻牌按钮 -->
-  <button class="action-btn" onclick="startFlipCard()">开始翻牌 / 抽取卡牌</button>
+    <!-- 牌阵区域 -->
+    <div class="tarot-spread">
+        <!-- 过去 -->
+        <div class="card-slot">
+            <div class="card-container" onclick="flipCard(this, 0)">
+                <div class="card-inner">
+                    <div class="card-front"></div>
+                    <div class="card-back"><img src="" alt="Tarot Card" class="tarot-img"></div>
+                </div>
+            </div>
+            <div class="card-label">Past Journey · 过去</div>
+            <div class="card-reading" id="reading-0">
+                <div class="reading-card-name"></div>
+                <div class="reading-title"></div>
+                <p class="reading-text"></p>
+            </div>
+        </div>
 
-  <!-- 卡牌解读结果面板 -->
-  <div class="reading-box" id="readingBox">
-    <h3>✨ 画面对应</h3>
-    <p id="elementText"></p>
-    <h3>📜 命运解读</h3>
-    <p id="meaningText"></p>
-  </div>
+        <!-- 现在 -->
+        <div class="card-slot">
+            <div class="card-container" onclick="flipCard(this, 1)">
+                <div class="card-inner">
+                    <div class="card-front"></div>
+                    <div class="card-back"><img src="" alt="Tarot Card" class="tarot-img"></div>
+                </div>
+            </div>
+            <div class="card-label">Present Heart · 现在</div>
+            <div class="card-reading" id="reading-1">
+                <div class="reading-card-name"></div>
+                <div class="reading-title"></div>
+                <p class="reading-text"></p>
+            </div>
+        </div>
 
-  <!-- 微信支付解锁弹窗 -->
-  <div id="payModal" class="modal-overlay" style="display: none;">
-    <div class="modal-content">
-      <h3>🔮 解锁完整塔罗牌解读</h3>
-      <p class="pay-tip">请使用微信扫描下方二维码，支付 <strong>≥ 2 元</strong> 即可解锁翻牌及完整卡牌解读。</p>
-      
-      <!-- 请确保根目录下有 qr.jpg 二维码图片 -->
-      <img src="qr.jpg" alt="微信支付二维码" class="qr-img">
-      
-      <p class="pay-note">支付完成后，点击下方按钮开始翻牌：</p>
-      <button id="confirmPayBtn" class="pay-btn">我已支付 ≥ 2 元，立即解锁</button>
+        <!-- 未来 -->
+        <div class="card-slot">
+            <div class="card-container" onclick="flipCard(this, 2)">
+                <div class="card-inner">
+                    <div class="card-front"></div>
+                    <div class="card-back"><img src="" alt="Tarot Card" class="tarot-img"></div>
+                </div>
+            </div>
+            <div class="card-label">Future Path · 未来</div>
+            <div class="card-reading" id="reading-2">
+                <div class="reading-card-name"></div>
+                <div class="reading-title"></div>
+                <p class="reading-text"></p>
+            </div>
+        </div>
     </div>
-  </div>
 
-  <script>
-    // ====================================================
-    // 1. 22 张大阿卡纳全套卡牌数据库
-    // ====================================================
-    const cards = [
-      { id: 0, name: "THE FOOL", cnName: "愚人", element: "九又四分之三站台与推着推车的哈利", meaning: "象征新的开始、纯真、冒险与无限可能性。如同哈利初入魔法世界，怀着盲目而纯粹的勇气踏上未知旅程。" },
-      { id: 1, name: "THE WIZARD", cnName: "魔术师 / 巫师", element: "身穿韦斯莱毛衣、手握魔杖施法的哈利·波特", meaning: "象征创造力、行动力、掌控资源与显化。代表拥有改变现状的工具与能力，能够将想法转化为现实。" },
-      { id: 2, name: "THE WITCH", cnName: "女祭司 / 女巫", element: "在药膏与书籍间沉思炼药的赫敏·格兰杰", meaning: "象征智慧、潜意识、理性与内在知识。代表冷静分析、对真理的追求以及不外露的强大精神力量。" },
-      { id: 3, name: "THE MOTHER", cnName: "女皇 / 母亲", element: "用魔法烹饪、编织毛衣的莫丽·韦斯莱", meaning: "象征丰饶、无条件的爱、滋养与包容。代表物质与情感上的丰盈，以及家庭带来的温暖庇护。" },
-      { id: 4, name: "THE FATHER", cnName: "皇帝 / 父亲", element: "詹姆·波特", meaning: "象征权威、秩序、保护与责任。代表建立规则、担当领袖以及提供坚实的后盾。" },
-      { id: 5, name: "THE HIEROPHANT", cnName: "教皇", element: "阿不思·邓布利多", meaning: "象征传统、导师、精神领袖与高等智慧。代表在迷茫时寻找正确的指引、信仰与道德标准。" },
-      { id: 6, name: "THE LOVERS", cnName: "恋人", element: "比尔·韦斯莱与芙蓉·德拉库尔", meaning: "象征真爱、结合、羁绊与重大选择。代表跨越外在阻碍与偏见的深厚情感，以及内心价值观的抉择。" },
-      { id: 7, name: "THE CHARIOT", cnName: "战车", element: "飞天汽车与霍格沃茨特快列车", meaning: "象征意志力、冲破困境、胜利与掌控。即使途中有失控风险，依靠执念与决心仍能冲向终点。" },
-      { id: 8, name: "JUSTICE", cnName: "正义", element: "分院帽", meaning: "象征公平、裁决、诚实与选择的后果。分院帽能看透人心本质，做出最公正无偏的归类与决定。" },
-      { id: 9, name: "THE HERMIT", cnName: "隐士", element: "在黑暗储藏室孤身研究的西弗勒斯·斯内普", meaning: "象征内省、孤独的探索、深层思考与隐秘潜行。代表在孤独与误解中守护真相，向内寻求答案。" },
-      { id: 10, name: "WHEEL OF FORTUNE", cnName: "命运之轮", element: "赫敏的时间转换器（Time-Turner）", meaning: "象征命运转折、时机、周期循环与不可逆的契机。代表命运齿轮的转动，带来变局与机遇。" },
-      { id: 11, name: "STRENGTH", cnName: "力量", element: "莱姆斯·卢平与其身后的狼人阴影", meaning: "象征内在包容、温柔的克制、勇气与接纳。代表用理性和爱去驯服内心的欲望与阴暗面。" },
-      { id: 12, name: "THE HANGED MAN", cnName: "倒吊人", element: "倒金钟咒（Levicorpus）", meaning: "象征换位思考、牺牲、等待与顺应困境。在被动或暂停的状态中，通过改变视角获得全新的领悟。" },
-      { id: 13, name: "DEATH", cnName: "死神", element: "老魔杖与死亡圣器符号", meaning: "象征终结、彻底的变革、旧阶段结束与重生。并非指肉体死亡，而是旧模式的破除与新纪元的开启。" },
-      { id: 14, name: "TEMPERANCE", cnName: "节制", element: "魔法石与炼金/熬制魔药", meaning: "象征平衡、调和、耐心与适度。如精妙的魔药炼制，需要精准把控比例与节奏，实现升华。" },
-      { id: 15, name: "THE DEVIL", cnName: "恶魔", element: "伏地魔、纳吉尼与黑魔标记", meaning: "象征执念、欲望、束缚与恐惧。代表对力量或永生的病态追求所带来的自我奴役与陷井。" },
-      { id: 16, name: "THE TOWER", cnName: "高塔", element: "被袭击和火光笼罩的霍格沃茨塔楼", meaning: "象征突如其来的剧变、破灭、虚幻规则的崩塌。虽然带来冲击，但也清除了旧有幻象，迎来重建。" },
-      { id: 17, name: "THE STAR", cnName: "星星", element: "邓布利多留给罗恩的熄灯器（Deluminator）", meaning: "象征希望、指引、心灵抚慰与灵感。在最黑暗沉寂的时刻发出微光，指引重逢与前行的方向。" },
-      { id: 18, name: "THE MOON", cnName: "月亮", element: "装满记忆银丝的冥想盆（Pensieve）", meaning: "象征潜意识、迷茫、隐秘与直觉。在波光粼粼的记忆迷雾中探寻被隐藏的真相与内在情绪。" },
-      { id: 19, name: "THE SUN", cnName: "太阳", element: "哈利骑乘鹰头马身有翼兽巴克比克翱翔", meaning: "象征自由、活力、成功与光明。代表冲破阴霾后的无比畅快、生命力的绽放与正向能量。" },
-      { id: 20, name: "JUDGEMENT", cnName: "审判", element: "凤凰福克斯（Fawkes）", meaning: "象征复苏、觉醒、灵魂救赎与召唤。如凤凰在灰烬中涅槃重获新生，代表重大转变与清算后的升华。" },
-      { id: 21, name: "THE WORLD", cnName: "世界", element: "国王十字车站的白色迷蒙空间", meaning: "象征圆满、完美终结、达成与灵魂的升华。代表大阿卡纳旅程的最终站，迎来完满与新的轮回。" }
-    ];
+    <button class="btn-shuffle" onclick="shuffleAndReset()">重新洗牌 (Shuffle)</button>
 
-    // ====================================================
-    // 2. 本地支付解锁逻辑
-    // ====================================================
-    let isPaid = localStorage.getItem('hp_tarot_paid') === 'true';
+    <script>
+        // 10张卡牌对应的解读数据库（小红书温和治愈风）
+        const cardsDatabase = {
+            'DEATH.jfif': {
+                name: '13 - DEATH (死神)',
+                title: '老魔杖与旧篇章的终结',
+                text: '告别不适合你的执念与能量。死神并不是终点，而是像魔杖换主一样，意味着旧循环的结束。放下过去，才能空出双手迎接全新的魔法。'
+            },
+            'JUDGEMENT.jfif': {
+                name: '20 - JUDGEMENT (审判)',
+                title: '福克斯与灵魂的涅槃觉醒',
+                text: '内心深处的召唤已经响起。就像凤凰在灰烬中重获新生，你正在经历一次自我蜕变，请勇敢接纳过去的一切，坦然迈向更高的阶段。'
+            },
+            'JUSTICE.jfif': {
+                name: '8 - JUSTICE (正义)',
+                title: '分院帽与内心的真实选择',
+                text: '分院帽听从你内心的渴望。面对当下选择时，无需迎合他人，保持坦诚与理性。你内心的正义与直觉，会为你指明最适合的归宿。'
+            },
+            'STRENGTH.jfif': {
+                name: '11 - STRENGTH (力量)',
+                title: '卢平教授与温和的掌控力',
+                text: '真正的力量并非强硬，而是接纳软肋后的温和与坚韧。像卢平对待心中的野兽一样，用包容与爱去抚平焦虑，你远比想象中更强大。'
+            },
+            'TEMPERANCE.jfif': {
+                name: '14 - TEMPERANCE (节制)',
+                title: '魔法石与魔药的精准调和',
+                text: '像熬制完美的魔药一样，生活需要火候与耐心。保持情绪的平稳，平衡好付出与收回，不疾不徐，美好的魔法正在静静酝酿。'
+            },
+            'THE CHARIOT.jfif': {
+                name: '7 - THE CHARIOT (战车)',
+                title: '飞天汽车与破局的魄力',
+                text: '握紧你心中的方向盘！哪怕前方有打人柳的阻碍，也要拿出冲破束缚的魄力。保持专注与信念，这趟旅途定能一往无前。'
+            },
+            'THE DEVIL.jfif': {
+                name: '15 - THE DEVIL (恶魔)',
+                title: '伏地魔与精神枷锁的觉察',
+                text: '审视那些让你感到焦虑或过度消耗的依赖。当你意识到这些精神束缚的瞬间，你就已经握住了斩断它们的魔杖，主导权在你手中。'
+            },
+            'THE FATHER.jfif': {
+                name: '4 - THE FATHER (皇帝)',
+                title: '詹姆·波特与坚实的守护',
+                text: '来自支柱与规则的能量。这段时间你拥有建立秩序的能力，去成为自己生活的守护者，给予自己足够的安全感与掌控感。'
+            },
+            'THE FOOL.jfif': {
+                name: '0 - THE FOOL (愚人)',
+                title: '九又四分之三站台的全新起点',
+                text: '带上你的好奇心，勇敢撞向那堵看似不可能的墙吧！新的篇章正在为你开启，不必过分担心未来，带着纯粹的信心去开启冒险。'
+            },
+            'THE HANGEN MAN.jfif': {
+                name: '12 - THE HANGEN MAN (倒吊人)',
+                title: '金钟悬挂与倒转的新视角',
+                text: '如果感到停滞不前，不妨将视角倒转过来。暂时的等待与沉淀并不是妥协，换个角度看世界，你会看清之前忽略的重要真相。'
+            }
+        };// 1. 保留你原有的 cards 变量（里面是之前的10张牌）
+// const cards = [ ... ]; 
 
-    // 点击“翻牌”入口函数
-    function startFlipCard() {
-      if (!isPaid) {
-        // 未支付：展示微信支付弹窗
-        document.getElementById('payModal').style.display = 'flex';
-        return;
-      }
-      // 已支付：直接翻牌与展示解读
-      executeFlipAndReading();
-    }
+// 2. 在 cards 声明的正下方粘贴新追加的数组
+const newlyAddedCards = [
+  { id: 1, name: "THE WIZARD", cnName: "魔术师 / 巫师", element: "身穿韦斯莱毛衣、手握魔杖施法的哈利·波特", meaning: "象征创造力、行动力、掌控资源与显化。" },
+  { id: 2, name: "THE WITCH", cnName: "女祭司 / 女巫", element: "在药膏与书籍间沉思炼药的赫敏·格兰杰", meaning: "象征智慧、潜意识、理性与内在知识。" },
+  { id: 3, name: "THE MOTHER", cnName: "女皇 / 母亲", element: "用魔法烹饪、编织毛衣的莫丽·韦斯莱", meaning: "象征丰饶、无条件的爱、滋养与包容。" },
+  { id: 5, name: "THE HIEROPHANT", cnName: "教皇", element: "阿不思·邓布利多", meaning: "象征传统、导师、精神领袖与高等智慧。" },
+  { id: 6, name: "THE LOVERS", cnName: "恋人", element: "比尔·韦斯莱与芙蓉·德拉库尔", meaning: "象征真爱、结合、羁绊与重大选择。" },
+  { id: 9, name: "THE HERMIT", cnName: "隐士", element: "在黑暗储藏室孤身研究的西弗勒斯·斯内普", meaning: "象征内省、孤独的探索、深层思考与隐秘潜行。" },
+  { id: 10, name: "WHEEL OF FORTUNE", cnName: "命运之轮", element: "赫敏的时间转换器（Time-Turner）", meaning: "象征命运转折、时机、周期循环与不可逆的契机。" },
+  { id: 16, name: "THE TOWER", cnName: "高塔", element: "被袭击和火光笼罩的霍格沃茨塔楼", meaning: "象征突如其来的剧变、破灭、虚幻规则的崩塌。" },
+  { id: 17, name: "THE STAR", cnName: "星星", element: "邓布利多留给罗恩的熄灯器（Deluminator）", meaning: "象征希望、指引、心灵抚慰与灵感。" },
+  { id: 18, name: "THE MOON", cnName: "月亮", element: "装满记忆银丝的冥想盆（Pensieve）", meaning: "象征潜意识、迷茫、隐秘与直觉。" },
+  { id: 19, name: "THE SUN", cnName: "太阳", element: "哈利骑乘鹰头马身有翼兽巴克比克翱翔", meaning: "象征自由、活力、成功与光明。" },
+  { id: 21, name: "THE WORLD", cnName: "世界", element: "国王十字车站的白色迷蒙空间", meaning: "象征圆满、完美终结、达成与灵魂的升华。" }
+];
 
-    // 点击弹窗“我已支付”解锁按钮
-    document.getElementById('confirmPayBtn').addEventListener('click', function() {
-      isPaid = true;
-      localStorage.setItem('hp_tarot_paid', 'true'); // 存入浏览器本地缓存
-      document.getElementById('payModal').style.display = 'none'; // 关闭弹窗
-      executeFlipAndReading(); // 触发翻牌
-    });
+// 3. 将新牌合并进主数组并按卡牌 ID 重新排序 (0 到 21)
+cards.push(...newlyAddedCards);
+cards.sort((a, b) => a.id - b.id);
 
-    // ====================================================
-    // 3. 抽牌与动画逻辑
-    // ====================================================
-    let isFlipping = false;
+        const allCardKeys = Object.keys(cardsDatabase);
+        let currentSelectedCards = [];
 
-    function executeFlipAndReading() {
-      if (isFlipping) return;
-      isFlipping = true;
+        // 洗牌算法
+        function shuffleArray(array) {
+            let currentIndex = array.length, randomIndex;
+            while (currentIndex !== 0) {
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex--;
+                [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+            }
+            return array;
+        }
 
-      const cardElem = document.getElementById('tarotCard');
-      const readingBox = document.getElementById('readingBox');
+        // 初始化/洗牌重置
+        function shuffleAndReset() {
+            // 1. 盖回所有牌，隐藏所有解读
+            const containers = document.querySelectorAll('.card-container');
+            const readings = document.querySelectorAll('.card-reading');
+            
+            containers.forEach(container => container.classList.remove('flipped'));
+            readings.forEach(reading => reading.classList.remove('show'));
 
-      // 每次抽牌前重置正面
-      cardElem.classList.remove('flipped');
-      readingBox.style.display = 'none';
+            // 2. 延迟等待盖牌动画完成后更新数据
+            setTimeout(() => {
+                const shuffled = shuffleArray([...allCardKeys]);
+                currentSelectedCards = shuffled.slice(0, 3); // 随机抽取3张不重复的卡牌
 
-      // 随机抽取一张牌 (0 - 21)
-      const randomCard = cards[Math.floor(Math.random() * cards.length)];
+                // 更新 DOM 中的图片和解读文本
+                const imgElements = document.querySelectorAll('.tarot-img');
+                imgElements.forEach((img, index) => {
+                    const cardKey = currentSelectedCards[index];
+                    const cardData = cardsDatabase[cardKey];
 
-      setTimeout(() => {
-        // 更新牌面元素
-        document.getElementById('cardNumber').innerText = `NO. ${randomCard.id}`;
-        document.getElementById('cardName').innerText = `${randomCard.name}\n(${randomCard.cnName})`;
-        document.getElementById('cardElement').innerText = randomCard.element;
+                    // 赋值图片
+                    img.src = cardKey;
 
-        // 更新解读面板文本
-        document.getElementById('elementText').innerText = randomCard.element;
-        document.getElementById('meaningText').innerText = randomCard.meaning;
+                    // 预填解牌文案
+                    const readingBox = document.getElementById(`reading-${index}`);
+                    readingBox.querySelector('.reading-card-name').innerText = cardData.name;
+                    readingBox.querySelector('.reading-title').innerText = cardData.title;
+                    readingBox.querySelector('.reading-text').innerText = cardData.text;
+                });
+            }, 400);
+        }
 
-        // 翻转牌面
-        cardElem.classList.add('flipped');
+        // 点击翻牌同时显示解牌文案
+        function flipCard(element, index) {
+            if (!element.classList.contains('flipped')) {
+                element.classList.add('flipped');
+                
+                // 翻牌动画进行到一半时显示文字
+                setTimeout(() => {
+                    const readingBox = document.getElementById(`reading-${index}`);
+                    readingBox.classList.add('show');
+                }, 300);
+            }
+        }
 
-        // 展示解读
-        setTimeout(() => {
-          readingBox.style.display = 'block';
-          isFlipping = false;
-        }, 600);
-      }, 300);
-    }
-  </script>
+        // 页面加载自动运行洗牌
+        window.onload = shuffleAndReset;
+    </script>
 </body>
 </html>
